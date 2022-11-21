@@ -1,6 +1,7 @@
 class PostsController < ApplicationController
   before_action :set_post, only: %i[ show edit update destroy ]
-
+  before_action :authenticate_user!, except: %i[ index show ]
+  before_action :authorize_user!, only: %i[ edit update destroy ]
   # GET /posts or /posts.json
   def index
     @posts = Post.all
@@ -23,7 +24,7 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(post_params)
     @post.user = current_user
-
+    
     respond_to do |format|
       if @post.save
         format.html { redirect_to post_url(@post), notice: "Post was successfully created." }
@@ -68,4 +69,10 @@ class PostsController < ApplicationController
     def post_params
       params.require(:post).permit(:title, :body)
     end
+
+    def authorize_user!
+        unless current_user == @post.user
+        redirect_to root_path, alert: "You are not the author of this post."
+    end
+  end
 end
