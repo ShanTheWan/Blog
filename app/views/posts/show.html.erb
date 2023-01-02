@@ -8,5 +8,9 @@
 </div>
 <div>
   <h3>COMMENTS</h3>
+  <div>
+    <%= render 'comments/form', post: @post, comment: Comment.new %>
+  </div>
+  <p><%= pluralize(@post.comments.count, "comment") %></p>
   <%= render @comments %>
 </div>
